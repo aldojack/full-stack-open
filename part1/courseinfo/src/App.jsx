@@ -5,13 +5,19 @@ const Header = ({ course }) => {
 const Content = ({ exercises }) => {
   const mappedContent = exercises.map((exercise, index) => {
     return (
-      <p key={index}>
-        {exercise.part}: {exercise.exercise}
-      </p>
+      <Part key={index} part={exercise.part} exercise={exercise.exercise} />
     );
   });
 
   return <div>{mappedContent}</div>;
+};
+
+const Part = ({ part, exercise }) => {
+  return (
+    <p>
+      {part}: {exercise}
+    </p>
+  );
 };
 
 const Total = ({ total }) => {
@@ -20,7 +26,6 @@ const Total = ({ total }) => {
 
 const App = () => {
   const course = "Half Stack application development";
-
 
   const exercises = [
     { part: "Fundamentals of React", exercise: 10 },
