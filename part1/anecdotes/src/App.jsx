@@ -12,28 +12,33 @@ function App() {
     "The only way to go fast, is to go well.",
   ];
 
-
   const [points, setPoints] = useState(new Array(ancedotes.length).fill(0));
+  let highestIndex = points.indexOf(Math.max(...points));
   const getRandomAncedote = () => {
-    return (Math.floor(Math.random() * ancedotes.length));
-  }
+    return Math.floor(Math.random() * ancedotes.length);
+  };
 
   const handleIncrease = () => {
-    const copiedPoints = [...points]
+    const copiedPoints = [...points];
     copiedPoints[selected] = copiedPoints[selected] + 1;
     setPoints(copiedPoints);
-  }
+  };
 
   const [selected, setSelected] = useState(0);
 
   return (
-  <div>
-    <p>{ancedotes[selected]}</p>
-    <p>votes:{points[selected]}</p>
-    <br/>
-    <button onClick={handleIncrease}>Vote</button>
-    <button onClick={() => setSelected(getRandomAncedote)}>Get random ancedote</button>
-  </div>
+    <div>
+      <h1>Ancedote of the day</h1>
+      <p>{ancedotes[selected]}</p>
+      <p>votes:{points[selected]}</p>
+      <br />
+      <button onClick={handleIncrease}>Vote</button>
+      <button onClick={() => setSelected(getRandomAncedote)}>
+        Get random ancedote
+      </button>
+      <h1>Ancedote with the most votes</h1>
+      <p>{ancedotes[highestIndex]}</p>
+    </div>
   );
 }
 
