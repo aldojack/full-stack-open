@@ -1,4 +1,5 @@
 import { useState } from "react"
+import './app.css'
 
 const Heading = ({ title }) => {
   return <h1>{title}</h1>
@@ -18,7 +19,7 @@ const Stat = ({ stat, count }) => {
 
 const Table = ({ heading, good, bad, neutral }) => {
   return (
-    <table>
+    <table className="statistics">
       <thead>
         <tr>
           <th>{heading}</th>

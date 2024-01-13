@@ -1,0 +1,48 @@
+table.statistics {
+    border: 1px solid #1C6EA4;
+    background-color: #EEEEEE;
+    width: fit-content;
+    text-align: left;
+    border-collapse: collapse;
+  }
+  table.statistics td, table.statistics th {
+    border: 1px solid #AAAAAA;
+    padding: 3px 2px;
+  }
+  table.statistics tbody td {
+    font-size: 13px;
+  }
+  table.statistics tr:nth-child(even) {
+    background: #D0E4F5;
+  }
+  table.statistics thead {
+    background: #1C6EA4;
+    background: -moz-linear-gradient(top, #5592bb 0%, #327cad 66%, #1C6EA4 100%);
+    background: -webkit-linear-gradient(top, #5592bb 0%, #327cad 66%, #1C6EA4 100%);
+    background: linear-gradient(to bottom, #5592bb 0%, #327cad 66%, #1C6EA4 100%);
+    border-bottom: 2px solid #444444;
+  }
+  table.statistics thead th {
+    font-size: 15px;
+    font-weight: bold;
+    color: #FFFFFF;
+    text-align: center;
+    border-left: 2px solid #D0E4F5;
+  }
+  table.statistics thead th:first-child {
+    border-left: none;
+  }
+  
+  table.statistics tfoot td {
+    font-size: 14px;
+  }
+  table.statistics tfoot .links {
+    text-align: right;
+  }
+  table.statistics tfoot .links a{
+    display: inline-block;
+    background: #1C6EA4;
+    color: #FFFFFF;
+    padding: 2px 8px;
+    border-radius: 5px;
+  }
