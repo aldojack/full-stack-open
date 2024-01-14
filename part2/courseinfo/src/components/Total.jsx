@@ -4,7 +4,7 @@ const Total = ({ exercises }) => {
   let total = exercises.map(exercise => exercise.exercises)
     .reduce((total, next) => total += next);
 
-  return <p>Number of exercises {total}</p>;
+  return <p><strong>Number of exercises {total}</strong></p>;
 };
 
 
