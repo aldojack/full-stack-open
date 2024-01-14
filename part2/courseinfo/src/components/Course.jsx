@@ -8,7 +8,7 @@ function Course({course}) {
         <div>
             <Header course={course.name} />
             <Content exercises={course.parts} />
-            {/* <Total total={course.parts.length} /> */}
+            <Total exercises={course.parts} />
         </div>
     )
 }
