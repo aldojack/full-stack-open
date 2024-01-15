@@ -6,12 +6,25 @@ function App() {
 
   const handleChange = (event) => {
     setNewName(event.target.value);
+    
   };
 
   const handleAdd = (event) => {
     event.preventDefault();
     const newPerson = {name: newName}
-    setPeople(people.concat(newPerson));
+    const alreadyExists = people.find(person => person.name === newPerson.name);
+    if(!alreadyExists){
+      setPeople(people.concat(newPerson));
+    }
+    else{
+      alert(`${newPerson.name} is already added to phonebook`)
+    }
+  }
+
+  const validateData = (data) => {
+    console.log(data);
+    const allPeople = new Set({...people});
+    return allPeople.has(data)
   }
 
   const renderedPeople = people.map((person) => (
