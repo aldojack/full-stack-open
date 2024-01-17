@@ -48,7 +48,7 @@ function App() {
     if (!alreadyExists) {
       setPeople(people.concat(addNewPerson));
     } else {
-      alert(`${addNewPerson.name} is already added to phonebook`);
+      alert(`This name or number is already added to phonebook`);
     }
   };
 
