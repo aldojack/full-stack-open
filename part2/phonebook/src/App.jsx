@@ -1,5 +1,10 @@
 import { useState } from "react";
 import "./app.css";
+import Contact from "./components/Contact";
+import ContactList from "./components/ContactList";
+import Filter from "./components/Filter";
+import Form from "./components/Form";
+import Heading from "./components/Heading";
 
 function App() {
   const [people, setPeople] = useState([
@@ -20,7 +25,7 @@ function App() {
   const handleFilter = (event) => {
     const { value } = event.target;
     setFilter(value);
-    filterContacts(value);
+    filterContacts(value.toLowerCase());
   };
 
   const filterContacts = (filteredName) => {
@@ -48,54 +53,34 @@ function App() {
   };
 
   const renderedList = (peopleList) => {
-    return peopleList.map((people) => (
-      <p key={people.id}>
-        {people.name}: {people.number}
-      </p>
-    ));
+    return peopleList.map((contact) => {
+      console.log(contact);
+      return <Contact contact={contact} />;
+    });
   };
 
   return (
     <div id="main">
-      <div className="form-group">
-        <label htmlFor="search">Filter by name:</label>
-        <input
-          type="text"
-          id="search"
-          name="search"
-          value={filter}
-          onChange={handleFilter}
+      <Filter 
+        filter={filter} 
+        onChange={handleFilter} 
+      />
+      <Heading 
+        title="Add New" 
+      />
+      <Form
+        onSubmit={handleAdd}
+        onChange={handleChange}
+        newPerson={newPerson}
+      />
+      <Heading 
+        title="Contacts"   
+      />
+      <ContactList
+        contactList={
+          !filter ? renderedList(people) : renderedList(filteredPeople)
+        }
         />
-      </div>
-      <h2>Add New</h2>
-      <form onSubmit={handleAdd}>
-        <fieldset>
-          <legend>Phonebook</legend>
-          <div className="form-group">
-            <label htmlFor="name">name:</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={newPerson.name}
-              onChange={handleChange}
-            />
-            <div className="form-group">
-              <label htmlFor="number">number:</label>
-              <input
-                type="text"
-                id="number"
-                name="number"
-                value={newPerson.number}
-                onChange={handleChange}
-              />
-            </div>
-            <button type="submit">add</button>
-          </div>
-        </fieldset>
-      </form>
-      <h2>Contacts</h2>
-      <div>{!filter ? renderedList(people) : renderedList(filteredPeople)}</div>
     </div>
   );
 }
