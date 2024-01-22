@@ -6,6 +6,7 @@ import ContactList from "./components/ContactList";
 import Filter from "./components/Filter";
 import Form from "./components/Form";
 import Heading from "./components/Heading";
+import contactService from './services/contacts'
 
 function App() {
   const [people, setPeople] = useState([])
@@ -14,10 +15,12 @@ function App() {
   const [filteredPeople, setFilteredPeople] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons")
+/*    axios.get("http://localhost:3001/contacts")
       .then(response => {
         setPeople(response.data)
-    })
+    })*/
+    contactService.getAll()
+      .then(allContacts => setPeople(allContacts));
   },[])
 
   const handleChange = (event) => {
@@ -28,14 +31,24 @@ function App() {
   const handleFilter = (event) => {
     const { value } = event.target;
     setFilter(value);
-    filterContacts(value.toLowerCase());
+    filterContacts(value);
   };
 
   const filterContacts = (filteredName) => {
-    const filteredPeople = [...people].filter((person) =>
-      person.name.toLowerCase().includes(filteredName)
+    if (filteredName === "") {
+      contactService.getAll()
+        .then(allContacts => {
+          setPeople(allContacts)
+          setFilteredPeople([]);
+      })
+    }
+    const regex = new RegExp( filter, 'i' );
+    const filteredPeople = people.filter((person) =>
+      person.name.match(regex)
     );
+    console.log(filteredPeople);
     setFilteredPeople(filteredPeople);
+    // setPeople(filteredPeople);
   };
 
   const handleAdd = (event) => {
@@ -49,17 +62,18 @@ function App() {
     });
 
     if (!alreadyExists) {
+      //If does not exist then add new person
       setPeople(people.concat(addNewPerson));
     } else {
       alert(`This name or number is already added to phonebook`);
     }
   };
 
-  const renderedList = (peopleList) => {
-    return peopleList.map((contact) => {
-      return <Contact key={contact.id} contact={contact} />;
-    });
-  };
+  // const renderedList = (peopleList) => {
+  //   return peopleList.map((contact) => {
+  //     return <Contact key={contact.id} contact={contact} />;
+  //   });
+  // };
 
   return (
     <div id="main">
@@ -79,9 +93,7 @@ function App() {
         title="Contacts"   
       />
       <ContactList
-        contactList={
-          !filter ? renderedList(people) : renderedList(filteredPeople)
-        }
+        contactList={filter ? filteredPeople : people}
         />
     </div>
   );

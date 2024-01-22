@@ -10,6 +10,7 @@ function FormComponent({name, value, onChange}) {
       name={name}
       value={value}
       onChange={onChange}
+      required={true}
     />
   </div>
   )
