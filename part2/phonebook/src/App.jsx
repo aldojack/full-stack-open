@@ -1,12 +1,10 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./app.css";
-import axios from 'axios'
-import Contact from "./components/Contact";
 import ContactList from "./components/ContactList";
 import Filter from "./components/Filter";
 import Form from "./components/Form";
 import Heading from "./components/Heading";
-import contactService from './services/contacts'
+import contactService from './services/contacts';
 
 function App() {
   const [people, setPeople] = useState([])
@@ -15,10 +13,7 @@ function App() {
   const [filteredPeople, setFilteredPeople] = useState([]);
 
   useEffect(() => {
-/*    axios.get("http://localhost:3001/contacts")
-      .then(response => {
-        setPeople(response.data)
-    })*/
+
     contactService.getAll()
       .then(allContacts => setPeople(allContacts));
   },[])
@@ -42,13 +37,13 @@ function App() {
           setFilteredPeople([]);
       })
     }
-    const regex = new RegExp( filter, 'i' );
+    const regex = new RegExp( filteredName, 'i' );
     const filteredPeople = people.filter((person) =>
       person.name.match(regex)
     );
-    console.log(filteredPeople);
+    console.log(`searching ${filteredName}`)
+    console.log('returning', filteredPeople);
     setFilteredPeople(filteredPeople);
-    // setPeople(filteredPeople);
   };
 
   const handleAdd = (event) => {
@@ -69,11 +64,6 @@ function App() {
     }
   };
 
-  // const renderedList = (peopleList) => {
-  //   return peopleList.map((contact) => {
-  //     return <Contact key={contact.id} contact={contact} />;
-  //   });
-  // };
 
   return (
     <div id="main">
