@@ -11,6 +11,10 @@
     "server": "json-server -p3001 --watch db.json"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.15.6",
+    "@mui/joy": "^5.0.0-beta.24",
     "axios": "^1.6.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

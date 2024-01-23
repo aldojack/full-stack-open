@@ -1,8 +1,17 @@
 #main{
-    width: 75%;
+    width: 50%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items:center
+    /* justify-content: start; */
 }
 form{
     width: fit-content;
+}
+
+.search{
+    width: 300px;
 }
 
 .form-group{
@@ -12,4 +21,20 @@ form{
 
 button{
     margin-top: 15px;
+}
+
+.contact-container{
+    width: max-content;
+}
+
+.contact{
+    display: flex;
+    column-gap: 5px;
+    align-items: center;
+}
+
+.crudContainer{
+    margin-left: auto;
+    display: flex;
+    column-gap: 10px;
 }
