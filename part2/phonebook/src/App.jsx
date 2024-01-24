@@ -9,13 +9,13 @@ import Heading from "./components/Heading";
 import contactService from "./services/contacts";
 
 function App() {
-  const [people, setPeople] = useState([]);
+  const [people, setPeople] = useState(null);
   const [newPerson, setNewPerson] = useState({ name: "", number: "" });
   const [filter, setFilter] = useState("");
-  const [filteredPeople, setFilteredPeople] = useState([]);
+  const [filteredPeople, setFilteredPeople] = useState(null);
 
   useEffect(() => {
-    contactService.getAll().then((allContacts) => setPeople(allContacts));
+    contactService.getAll().then((allContacts) => setTimeout(() => setPeople(allContacts), 3000) );
   }, []);
 
   const handleChange = (event) => {
@@ -59,7 +59,12 @@ function App() {
           setPeople(people.concat(createdContact));
           notify(`new contact ${createdContact.name} added`);
         })
-        .catch((error) => handleError(error, `Unable to add ${addNewPerson.name}, please refresh and try again`));
+        .catch((error) =>
+          handleError(
+            error,
+            `Unable to add ${addNewPerson.name}, please refresh and try again`
+          )
+        );
     } else {
       // If the contact already exists, prompt for update
       let updateMessage =
@@ -84,7 +89,12 @@ function App() {
             );
             notify(`${updatedContact.name} updated`);
           })
-          .catch((error) => handleError(error, `Unable to update contact, please refresh and try again`));
+          .catch((error) =>
+            handleError(
+              error,
+              `Unable to update contact, please refresh and try again`
+            )
+          );
       }
     }
   };
@@ -100,14 +110,19 @@ function App() {
           );
           notify(`${personToDelete.name} deleted successfully`);
         })
-        .catch((error) => handleError(error, `Unable to delete ${personToDelete.name}, please refresh and try again`));
+        .catch((error) =>
+          handleError(
+            error,
+            `Unable to delete ${personToDelete.name}, please refresh and try again`
+          )
+        );
     }
   };
 
   const handleError = (error, message) => {
-    if(error.response.status === 404) notify(message);
-    else notify(error.message)
-  }
+    if (error.response.status === 404) notify(message);
+    else notify(error.message);
+  };
 
   // const handleEdit = (id) => {};
 
@@ -124,10 +139,12 @@ function App() {
       />
       <ToastContainer pauseOnHover />
       <Heading title="Contacts" />
-      <ContactList
-        contactList={filter ? filteredPeople : people}
-        onDelete={handleDelete}
-      />
+      {!people ? <p>Loading...</p> : (
+        <ContactList
+          contactList={filter ? filteredPeople : people}
+          onDelete={handleDelete}
+        />
+      )}
     </div>
   );
 }
