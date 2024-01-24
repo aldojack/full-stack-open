@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./app.css";
 import ContactList from "./components/ContactList";
 import Filter from "./components/Filter";
@@ -53,13 +55,15 @@ function App() {
       // If does not exist then add new person
       contactService
         .create(addNewPerson)
-        .then((createdContact) => setPeople(people.concat(createdContact)))
-        .catch((error) =>
-          console.log("catch error found in handle add: ", error)
-        );
+        .then((createdContact) => {
+          setPeople(people.concat(createdContact));
+          notify(`new contact ${createdContact.name} added`);
+        })
+        .catch((error) => handleError(error, `Unable to add ${addNewPerson.name}, please refresh and try again`));
     } else {
       // If the contact already exists, prompt for update
-      let updateMessage = "This contact already exists. Do you want to update it?";
+      let updateMessage =
+        "This contact already exists. Do you want to update it?";
 
       if (alreadyExists.name === addNewPerson.name) {
         updateMessage = `${alreadyExists.name} already has a phone number of ${alreadyExists.number}. Do you want to update it to ${addNewPerson.number}?`;
@@ -70,7 +74,6 @@ function App() {
       const updateConfirmed = window.confirm(updateMessage);
 
       if (updateConfirmed) {
-       
         contactService
           .update(alreadyExists.id, addNewPerson)
           .then((updatedContact) => {
@@ -79,10 +82,9 @@ function App() {
                 person.id === alreadyExists.id ? updatedContact : person
               )
             );
+            notify(`${updatedContact.name} updated`);
           })
-          .catch((error) =>
-            console.log("catch error found in handle update: ", error)
-          );
+          .catch((error) => handleError(error, `Unable to update contact, please refresh and try again`));
       }
     }
   };
@@ -93,18 +95,23 @@ function App() {
       contactService
         .deleteContact(id)
         .then(() => {
-          window.alert(`${personToDelete.name} deleted successfully`);
           setPeople(
             [...people].filter((deleteContact) => deleteContact.id !== id)
           );
+          notify(`${personToDelete.name} deleted successfully`);
         })
-        .catch((error) =>
-          window.alert(`Error found in handle delete: `, error)
-        );
+        .catch((error) => handleError(error, `Unable to delete ${personToDelete.name}, please refresh and try again`));
     }
   };
 
+  const handleError = (error, message) => {
+    if(error.response.status === 404) notify(message);
+    else notify(error.message)
+  }
+
   // const handleEdit = (id) => {};
+
+  const notify = (message) => toast(message);
 
   return (
     <div id="main">
@@ -115,6 +122,7 @@ function App() {
         onChange={handleChange}
         newPerson={newPerson}
       />
+      <ToastContainer pauseOnHover />
       <Heading title="Contacts" />
       <ContactList
         contactList={filter ? filteredPeople : people}
