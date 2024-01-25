@@ -1,5 +1,10 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import './app.css';
+import CountriesList from "./components/CountriesList";
+import Country from './components/Country';
+import Message from "./components/Message";
+import Search from "./components/Search";
 
 function App() {
   const [countries, setCountries] = useState(null);
@@ -8,9 +13,11 @@ function App() {
 
   useEffect(() => {
     if (search) {
-      const searchString = search.toLowerCase(); 
+      const searchString = search.toLowerCase();
       setFilteredCountries(
-        countries.filter((country) => country.name.common.toLowerCase().includes(searchString))
+        countries.filter((country) =>
+          country.name.common.toLowerCase().includes(searchString)
+        )
       );
     } else {
       setFilteredCountries([]);
@@ -28,44 +35,25 @@ function App() {
     setSearch(value);
   };
 
-  const Country = ({country}) => {
-    return (
-      <div>
-        <h1>{country.name.common}</h1>
-        <p>Capital: {country.capital[0]}</p>
-        <p>Area: {country.area}</p>
-        <div>
-          <h2>Languages</h2>
-          <ul>
-            {Object.values(country.languages).map(language => <li>{language}</li>)}
-          </ul>
-          <div>
-            <img src={country.flags["png"]}/>
-          </div>
-        </div>
-      </div>
-    )
+  const handleClick = (country) => {
+    // console.log(country)
+    setFilteredCountries([country]);
   }
-
-  const CountriesList = ({countries}) => {
-    return countries.map((country) => (
-      <p key={country.name.common}>{country.name.common}</p>
-    ));
-  };
-
-  const Message = ({ message }) => <p>{message}</p>;
 
   return (
     <div>
-      <label>
-        Find countries:{" "}
-        <input type="text" value={search} onChange={handleChange} />
-      </label>
+      <Search search={search} onChange={handleChange} />
       {filteredCountries && (
         <>
-          {filteredCountries.length > 10 && <Message message="Too many matches, try being more specific" />}
-          {(filteredCountries.length > 1 && filteredCountries.length < 10) && <CountriesList countries={filteredCountries} />}
-          {filteredCountries.length === 1 && <Country country={filteredCountries[0]}/>}
+          {filteredCountries.length > 10 && (
+            <Message message="Too many matches, try being more specific" />
+          )}
+          {filteredCountries.length > 1 && filteredCountries.length < 10 && (
+            <CountriesList countries={filteredCountries} onClick={handleClick}/>
+          )}
+          {filteredCountries.length === 1 && (
+            <Country country={filteredCountries[0]} />
+          )}
         </>
       )}
     </div>
