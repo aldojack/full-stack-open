@@ -36,7 +36,6 @@ function App() {
   };
 
   const handleClick = (country) => {
-    // console.log(country)
     setFilteredCountries([country]);
   }
 
@@ -52,7 +51,7 @@ function App() {
             <CountriesList countries={filteredCountries} onClick={handleClick}/>
           )}
           {filteredCountries.length === 1 && (
-            <Country country={filteredCountries[0]} />
+            <Country country={filteredCountries[0]}/>
           )}
         </>
       )}
