@@ -5,7 +5,7 @@ const PORT = 3001;
 
 app.use(express.json());
 
-let personDb = [...data]
+let personDb = [...data];
 
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
 
@@ -28,18 +28,37 @@ app.get("/api/persons/:id", (req, res) => {
   else res.status(200).json(person);
 });
 
-app.delete('/api/persons/:id', (req, res) => {
+app.delete("/api/persons/:id", (req, res) => {
   const id = +req.params.id;
 
   const personToDelete = personDb.find((person) => person.id === id);
 
   if (!personToDelete) res.status(404).send(`No records found for ID ${id}`);
   else {
-    // personDb = personDb.filter(person => person.id !== personToDelete.id)
-    const findPerson = personDb.indexOf(personToDelete)
-    personDb.splice(findPerson,1);
+    const findPerson = personDb.indexOf(personToDelete);
+    personDb.splice(findPerson, 1);
     res.status(204).end();
-  };
+  }
+});
+
+function validatePerson(req, res, next) {
+  const { body } = req;
+  //If name or number is missing from request then return 400 status code
+  if (!body.name || !body.number) {
+    return res.status(400).json({error: "Missing name or number value"});
+  }
+  //check if name exists
+  const nameExists = personDb.find((person) => person.name.toLowerCase() === body.name.toLowerCase());
+  //If a record is found then return 400 status code with message that name already exists
+  if (nameExists) res.status(400).json({error: `${body.name} already exists`});
+  //else move on to add to DB
+  else next();
+}
+
+app.post("/api/persons", validatePerson, (req, res) => {
+  const newPerson = { id: Math.floor(Math.random() * 10000), ...req.body };
+  personDb = personDb.concat(newPerson);
+  return res.status(201).json(newPerson);
 });
 
 /* end of persons endpoint */
