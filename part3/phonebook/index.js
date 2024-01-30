@@ -1,11 +1,29 @@
 const express = require("express");
 let data = require("./db.json");
 const app = express();
-const morgan = require('morgan');
+const morgan = require("morgan");
 const PORT = 3001;
 
 app.use(express.json());
-app.use(morgan('tiny'));
+morgan.token('body', (req, res)=> {
+  if(req.method === 'POST'){
+    return JSON.stringify(req.body);
+  }
+})
+app.use(
+  morgan((tokens, req, res) => {
+    return [
+      tokens.method(req, res),
+      tokens.url(req, res),
+      tokens.status(req, res),
+      tokens.res(req, res, "content-length"),
+      "-",
+      tokens["response-time"](req, res),
+      "ms",
+      tokens.body(req, res),
+    ].join(" ");
+  })
+);
 
 let personDb = [...data];
 
@@ -46,12 +64,15 @@ function validatePerson(req, res, next) {
   const { body } = req;
   //If name or number is missing from request then return 400 status code
   if (!body.name || !body.number) {
-    return res.status(400).json({error: "Missing name or number value"});
+    return res.status(400).json({ error: "Missing name or number value" });
   }
   //check if name exists
-  const nameExists = personDb.find((person) => person.name.toLowerCase() === body.name.toLowerCase());
+  const nameExists = personDb.find(
+    (person) => person.name.toLowerCase() === body.name.toLowerCase()
+  );
   //If a record is found then return 400 status code with message that name already exists
-  if (nameExists) res.status(400).json({error: `${body.name} already exists`});
+  if (nameExists)
+    res.status(400).json({ error: `${body.name} already exists` });
   //else move on to add to DB
   else next();
 }
