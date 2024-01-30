@@ -1,9 +1,11 @@
 const express = require("express");
 let data = require("./db.json");
 const app = express();
+const morgan = require('morgan');
 const PORT = 3001;
 
 app.use(express.json());
+app.use(morgan('tiny'));
 
 let personDb = [...data];
 
@@ -17,7 +19,6 @@ app.get("/info", (req, res) => {
 });
 /* start of persons endpoint */
 app.get("/api/persons", (req, res) => {
-  console.log(personDb);
   res.json(personDb);
 });
 
