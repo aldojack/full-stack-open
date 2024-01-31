@@ -2,9 +2,15 @@ const express = require("express");
 let data = require("./db.json");
 const app = express();
 const morgan = require("morgan");
-const PORT = 3001;
+const cors = require("cors");
+
+const PORT = process.env.PORT || 3001
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
 
 app.use(express.json());
+app.use(cors());
 morgan.token('body', (req, res)=> {
   if(req.method === 'POST'){
     return JSON.stringify(req.body);
@@ -27,7 +33,6 @@ app.use(
 
 let personDb = [...data];
 
-app.listen(PORT, () => console.log(`Server running on ${PORT}`));
 
 app.get("/info", (req, res) => {
   const body = `
