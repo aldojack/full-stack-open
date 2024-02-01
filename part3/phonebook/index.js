@@ -4,18 +4,19 @@ const app = express();
 const morgan = require("morgan");
 const cors = require("cors");
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+  console.log(`Server running on port ${PORT}`);
+});
 
+app.use(express.static("dist"));
 app.use(express.json());
 app.use(cors());
-morgan.token('body', (req, res)=> {
-  if(req.method === 'POST'){
+morgan.token("body", (req, res) => {
+  if (req.method === "POST") {
     return JSON.stringify(req.body);
   }
-})
+});
 app.use(
   morgan((tokens, req, res) => {
     return [
@@ -32,7 +33,6 @@ app.use(
 );
 
 let personDb = [...data];
-
 
 app.get("/info", (req, res) => {
   const body = `
