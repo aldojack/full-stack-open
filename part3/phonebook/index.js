@@ -1,5 +1,6 @@
 const express = require("express");
 let data = require("./db.json");
+const Person = require("./model/person");
 const app = express();
 const morgan = require("morgan");
 const cors = require("cors");
@@ -34,35 +35,43 @@ app.use(
 
 let personDb = [...data];
 
-app.get("/info", (req, res) => {
+app.get("/info", async (req, res) => {
+  let totalPeople = await Person.find({}).then((results) => {
+    return results.length;
+  });
   const body = `
-        <p>Phonebook has info for ${personDb.length} people</p>
+        <p>Phonebook has info for ${totalPeople} people</p>
         <p>${new Date().toString()}</p>`;
   res.status(200).send(body);
 });
+
 /* start of persons endpoint */
 app.get("/api/persons", (req, res) => {
-  res.json(personDb);
+  Person.find({}).then((collection) => {
+    res.json(collection);
+  });
 });
+//Update name or phone number
+// app.get("/api/persons/:id", (req, res) => {
+//   const id = req.params.id;
 
-app.get("/api/persons/:id", (req, res) => {
-  const id = +req.params.id;
-  const person = personDb.find((person) => person.id === id);
-  if (!person) res.status(404).send(`No records found for ID ${id}`);
-  else res.status(200).json(person);
-});
+//   Person.find({ _id: id })
+//     .then((personFound) => res.json(personFound))
+//     .catch((error) => console.log(error));
+// });
 
 app.delete("/api/persons/:id", (req, res) => {
-  const id = +req.params.id;
+  const id = req.params.id;
 
-  const personToDelete = personDb.find((person) => person.id === id);
+  // Person.deleteOne({ _id: id })
+  //   .then((personDeleted) => res.status(204).send("Successful delete"))
+  //   .catch((error) => console.log(error));
 
-  if (!personToDelete) res.status(404).send(`No records found for ID ${id}`);
-  else {
-    const findPerson = personDb.indexOf(personToDelete);
-    personDb.splice(findPerson, 1);
-    res.status(204).end();
-  }
+  Person.findByIdAndDelete(req.params.id)
+    .then((result) => {
+      res.status(204).end();
+    })
+    .catch((error) => next(error));
 });
 
 function validatePerson(req, res, next) {
