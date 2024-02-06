@@ -1,5 +1,4 @@
 const express = require("express");
-let data = require("./db.json");
 const Person = require("./model/person");
 const app = express();
 const morgan = require("morgan");
@@ -33,8 +32,6 @@ app.use(
   })
 );
 
-let personDb = [...data];
-
 app.get("/info", async (req, res) => {
   let totalPeople = await Person.find({}).then((results) => {
     return results.length;
@@ -46,17 +43,18 @@ app.get("/info", async (req, res) => {
 });
 
 /* start of persons endpoint */
-app.get("/api/persons", (req, res) => {
+app.get("/api/persons", (req, res, next) => {
   Person.find({}).then((collection) => {
     res.json(collection);
-  });
+  })
+  .catch(error => next(error));
 });
 
-app.get("/api/persons/:id", (req, res) => {
+app.get("/api/persons/:id", (req, res, next) => {
 
   Person.findById(req.params.id)
     .then((personFound) => res.json(personFound))
-    .catch((error) => console.log(error));
+    .catch((error) => next(error));
 });
 
 app.delete("/api/persons/:id", (req, res, next) => {
@@ -74,28 +72,40 @@ function validatePerson(req, res, next) {
   if (!body.name || !body.number) {
     return res.status(400).json({ error: "Missing name or number value" });
   }
-  //check if name exists
-  const nameExists = personDb.find(
-    (person) => person.name.toLowerCase() === body.name.toLowerCase()
-  );
-  //If a record is found then return 400 status code with message that name already exists
-  if (nameExists)
-    res.status(400).json({ error: `${body.name} already exists` });
-  //else move on to add to DB
   else next();
 }
 
-app.post("/api/persons", validatePerson, (req, res) => {
-  const newPerson = { id: Math.floor(Math.random() * 10000), ...req.body };
-  personDb = personDb.concat(newPerson);
-  return res.status(201).json(newPerson);
+app.post("/api/persons", validatePerson, (req, res, next) => {
+  // const newPerson = { id: Math.floor(Math.random() * 10000), ...req.body };
+  const newPerson = new Person({
+    ...req.body
+  });
+  newPerson.save()
+  .then(res.status(201).json(newPerson))
+  .catch(error => next(error))
 });
 
 app.put("/api/persons/:id", (req, res, next) => {
   const updatedPerson = req.body;
   Person.findByIdAndUpdate(req.params.id, updatedPerson)
   .then(result => res.status(201).json(result))
-  .catch(error => next(next))
+  .catch(error => next(next));
 })
 
 /* end of persons endpoint */
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' });
+  } 
+
+  next(error);
+}
+
+const unknownEndpoints = (req, res) => {
+  res.status(404).send({error: 'Unknown endpoint'});
+}
+app.use(errorHandler);
+app.use(unknownEndpoints);

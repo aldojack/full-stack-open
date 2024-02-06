@@ -18,7 +18,7 @@ function App() {
     contactService
       .getAll()
       .then((allContacts) => setTimeout(() => setPeople(allContacts), 1500));
-  }, [people]);
+  }, []);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
