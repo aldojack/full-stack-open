@@ -15,8 +15,10 @@ function App() {
   const [filteredPeople, setFilteredPeople] = useState(null);
 
   useEffect(() => {
-    contactService.getAll().then((allContacts) => setTimeout(() => setPeople(allContacts), 3000) );
-  }, []);
+    contactService
+      .getAll()
+      .then((allContacts) => setTimeout(() => setPeople(allContacts), 1500));
+  }, [people]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -87,6 +89,7 @@ function App() {
                 person.id === alreadyExists.id ? updatedContact : person
               )
             );
+            setNewPerson({ name: "", number: "" });
             notify(`${updatedContact.name} updated`);
           })
           .catch((error) =>
@@ -139,7 +142,9 @@ function App() {
       />
       <ToastContainer pauseOnHover />
       <Heading title="Contacts" />
-      {!people ? <p>Loading...</p> : (
+      {!people ? (
+        <p>Loading...</p>
+      ) : (
         <ContactList
           contactList={filter ? filteredPeople : people}
           onDelete={handleDelete}
