@@ -51,21 +51,15 @@ app.get("/api/persons", (req, res) => {
     res.json(collection);
   });
 });
-//Update name or phone number
-// app.get("/api/persons/:id", (req, res) => {
-//   const id = req.params.id;
 
-//   Person.find({ _id: id })
-//     .then((personFound) => res.json(personFound))
-//     .catch((error) => console.log(error));
-// });
+app.get("/api/persons/:id", (req, res) => {
 
-app.delete("/api/persons/:id", (req, res) => {
-  const id = req.params.id;
+  Person.findById(req.params.id)
+    .then((personFound) => res.json(personFound))
+    .catch((error) => console.log(error));
+});
 
-  // Person.deleteOne({ _id: id })
-  //   .then((personDeleted) => res.status(204).send("Successful delete"))
-  //   .catch((error) => console.log(error));
+app.delete("/api/persons/:id", (req, res, next) => {
 
   Person.findByIdAndDelete(req.params.id)
     .then((result) => {
@@ -96,5 +90,12 @@ app.post("/api/persons", validatePerson, (req, res) => {
   personDb = personDb.concat(newPerson);
   return res.status(201).json(newPerson);
 });
+
+app.put("/api/persons/:id", (req, res, next) => {
+  const updatedPerson = req.body;
+  Person.findByIdAndUpdate(req.params.id, updatedPerson)
+  .then(result => res.status(201).json(result))
+  .catch(error => next(next))
+})
 
 /* end of persons endpoint */
