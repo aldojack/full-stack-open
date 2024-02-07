@@ -48,6 +48,7 @@ function App() {
 
   const handleAdd = (event) => {
     event.preventDefault();
+    setError('');
     const addNewPerson = { ...newPerson };
     if(validatePerson(addNewPerson))
     {
@@ -64,6 +65,7 @@ function App() {
           .create(addNewPerson)
           .then((createdContact) => {
             setPeople(people.concat(createdContact));
+            setNewPerson({ name: "", number: "" });
             notify(`new contact ${createdContact.name} added`);
           })
           .catch((error) => {
@@ -110,7 +112,8 @@ function App() {
     }
 
   const validatePerson = (person) => {
-    if(!person.name.length < 3) {
+
+    if(person.name.length < 3) {
       setError('Name must be longer than 3 characters long')
       return false;
     }
@@ -118,8 +121,8 @@ function App() {
       setError('Please enter number')
       return false
     }
-    if(person.number.length < 11) {
-      setError('Phone number must be more than 11 characters')
+    if(person.number.length < 8) {
+      setError('Phone number must be more than 8 characters')
       return false;
     }
     return true;
