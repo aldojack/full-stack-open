@@ -8,9 +8,17 @@ mongoose.connect(process.env.MONGO_URI).catch((err) => {
 console.log("Connected");
 
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
-});
+  name: {
+    type: String,
+    minLength: 3,
+    required: true
+  },
+  number: {
+    type: String,
+    minLength: 11,
+    required: true
+  },
+}, { strict: 'throw' });
 
 personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
