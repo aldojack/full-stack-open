@@ -44,21 +44,20 @@ app.get("/info", async (req, res) => {
 
 /* start of persons endpoint */
 app.get("/api/persons", (req, res, next) => {
-  Person.find({}).then((collection) => {
-    res.json(collection);
-  })
-  .catch(error => next(error));
+  Person.find({})
+    .then((collection) => {
+      res.json(collection);
+    })
+    .catch((error) => next(error));
 });
 
 app.get("/api/persons/:id", (req, res, next) => {
-
   Person.findById(req.params.id)
     .then((personFound) => res.json(personFound))
     .catch((error) => next(error));
 });
 
 app.delete("/api/persons/:id", (req, res, next) => {
-
   Person.findByIdAndDelete(req.params.id)
     .then((result) => {
       res.status(204).end();
@@ -66,46 +65,49 @@ app.delete("/api/persons/:id", (req, res, next) => {
     .catch((error) => next(error));
 });
 
-function validatePerson(req, res, next) {
-  const { body } = req;
-  //If name or number is missing from request then return 400 status code
-  if (!body.name || !body.number) {
-    return res.status(400).json({ error: "Missing name or number value" });
-  }
-  else next();
-}
-
-app.post("/api/persons", validatePerson, (req, res, next) => {
-  // const newPerson = { id: Math.floor(Math.random() * 10000), ...req.body };
+app.post("/api/persons", (req, res, next) => {
   const newPerson = new Person({
-    ...req.body
+    ...req.body,
   });
-  newPerson.save()
-  .then(res.status(201).json(newPerson))
-  .catch(error => next(error))
+
+  newPerson
+    .save()
+    .then((result) => {
+
+      res.status(201).json(result);
+    })
+    .catch((error) => next(error));
 });
 
 app.put("/api/persons/:id", (req, res, next) => {
-  const updatedPerson = req.body;
-  Person.findByIdAndUpdate(req.params.id, updatedPerson)
-  .then(result => res.status(201).json(result))
-  .catch(error => next(next));
-})
+  const updatedPerson = {
+    ...req.body,
+  };
+
+
+
+  Person.findByIdAndUpdate(req.params.id, updatedPerson, { new: true, runValidators:true })
+    .then((result) => res.status(201).json(result))
+    .catch((error) => next(error));
+});
 
 /* end of persons endpoint */
 
 const errorHandler = (error, request, response, next) => {
-  console.error(error.message)
 
-  if (error.name === 'CastError') {
-    return response.status(400).send({ error: 'malformatted id' });
-  } 
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
+  } else if (error.name === "StrictModeError") {
+    return response.status(400).json({ error: error.message });
+  }
 
   next(error);
-}
+};
 
 const unknownEndpoints = (req, res) => {
-  res.status(404).send({error: 'Unknown endpoint'});
-}
+  res.status(404).send({ error: "Unknown endpoint" });
+};
 app.use(errorHandler);
 app.use(unknownEndpoints);
