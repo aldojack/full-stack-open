@@ -26,7 +26,21 @@ describe('total likes', () => {
     })
 })
 
-  test('most liked blog', () => {
-    const result = listHelper.favoriteBlog(data.listWithMultipleBlogs)
-    expect(result).toEqual(data.listWithMultipleBlogs[2])
-  })
+describe('most liked blog', () => {
+
+    test('most liked blog from list of blogs', () => {
+      const result = listHelper.favoriteBlog(data.listWithMultipleBlogs)
+      expect(result).toEqual(data.listWithMultipleBlogs[2])
+    })
+
+    test('most liked blog from list of 1', () => {
+        const result = listHelper.favoriteBlog(data.listWithOneBlog)
+        expect(result).toEqual(data.listWithOneBlog[0])
+      })
+
+      test('most liked blog from empty list', () => {
+        const result = listHelper.favoriteBlog(data.listWithZero)
+        expect(result).toBe('No blogs')
+      })
+
+})
