@@ -8,33 +8,43 @@ const api = supertest(app)
 beforeAll(async () => {
     await Blog.deleteMany({})
     await Blog.insertMany(listHelper.initialData)
-  })
-  
-  describe('GET Methods',() => {
+})
+
+describe('GET Methods', () => {
     test("Testing api/blogs", async () => {
-      const blogs = await api.get('/api/blogs').expect(200)
-      expect(blogs.body).toHaveLength(listHelper.initialData.length)
+        const blogs = await api.get('/api/blogs').expect(200)
+        expect(blogs.body).toHaveLength(listHelper.initialData.length)
     })
-  })
 
-  describe('POST Methods',() => {
+    test('Testing all blogs have ID', async () => {
+        const blogs = await api.get('/api/blogs').expect(200)
+        console.log(blogs);
+        expect(blogs.body).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({id: expect.any(String)})
+            ])
+        )
+    })
+})
+
+describe('POST Methods', () => {
     test("Testing api/blogs", async () => {
 
-    const DBSizeBeforeAdd = await listHelper.getBlogs();
-    
-      const blog = {
-        title: "frontend tips and tricks",
-        author: "Alan Jack",
-        url: "www.fronty.com",
-        likes: 5
-    }
+        const DBSizeBeforeAdd = await listHelper.getBlogs();
 
-      await api.post('/api/blogs').send(blog).expect(201)
-      const DBSizeAfterAdd = await listHelper.getBlogs();
-      expect(DBSizeAfterAdd.length).toBe(DBSizeBeforeAdd.length + 1)
+        const blog = {
+            title: "frontend tips and tricks",
+            author: "Alan Jack",
+            url: "www.fronty.com",
+            likes: 5
+        }
+
+        await api.post('/api/blogs').send(blog).expect(201)
+        const DBSizeAfterAdd = await listHelper.getBlogs();
+        expect(DBSizeAfterAdd.length).toBe(DBSizeBeforeAdd.length + 1)
     })
-  })
-  
-  afterAll(async () => {
+})
+
+afterAll(async () => {
     await mongoose.connection.close()
-  })
+})
