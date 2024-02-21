@@ -12,14 +12,26 @@ beforeAll(async () => {
   
   describe('GET Methods',() => {
     test("Testing api/blogs", async () => {
-      await api.get('/api/blogs').expect(200)
+      const blogs = await api.get('/api/blogs').expect(200)
+      expect(blogs.body).toHaveLength(listHelper.initialData.length)
     })
   })
-  
+
   describe('POST Methods',() => {
     test("Testing api/blogs", async () => {
-      const blog = listHelper.initialData[0]
-      const blogs = await api.post('/api/blogs', blog).expect(201)
+
+    const DBSizeBeforeAdd = await listHelper.getBlogs();
+    
+      const blog = {
+        title: "frontend tips and tricks",
+        author: "Alan Jack",
+        url: "www.fronty.com",
+        likes: 5
+    }
+
+      await api.post('/api/blogs').send(blog).expect(201)
+      const DBSizeAfterAdd = await listHelper.getBlogs();
+      expect(DBSizeAfterAdd.length).toBe(DBSizeBeforeAdd.length + 1)
     })
   })
   
