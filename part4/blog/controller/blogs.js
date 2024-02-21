@@ -8,7 +8,16 @@ blogsRouter.get('/', async (request, response) => {
   })
   
 blogsRouter.post('/', async (request, response) => {
-    const blogToBeAdded = new Blog(request.body)
+    const {body} = request
+
+    const blogToBeAdded = new Blog({
+      title: body.title,
+      author: body.author,
+      url: body.url, 
+      likes: body.likes || 0
+    })
+
+    console.log(blogToBeAdded);
     
     const savedBlog = await blogToBeAdded.save()
     response.status(201).json(savedBlog)

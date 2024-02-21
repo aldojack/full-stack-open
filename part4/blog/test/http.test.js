@@ -18,32 +18,37 @@ describe('GET Methods', () => {
 
     test('Testing all blogs have ID', async () => {
         const blogs = await api.get('/api/blogs').expect(200)
-        console.log(blogs);
         expect(blogs.body).toEqual(
             expect.arrayContaining([
-                expect.objectContaining({id: expect.any(String)})
+                expect.objectContaining({ id: expect.any(String) })
             ])
         )
     })
 })
 
 describe('POST Methods', () => {
-    test("Testing api/blogs", async () => {
-
-        const DBSizeBeforeAdd = await listHelper.getBlogs();
-
-        const blog = {
+    test.each([
+        ['with likes property', {
             title: "frontend tips and tricks",
             author: "Alan Jack",
             url: "www.fronty.com",
             likes: 5
-        }
+        }],
+        ['without likes property', {
+            title: "frontend tips and tricks",
+            author: "Alan Jack",
+            url: "www.fronty.com",
+        }]
+    ])('Testing api/blogs %s', async (_, blog) => {
+        const DBBeforeAdd = await listHelper.getBlogs();
 
-        await api.post('/api/blogs').send(blog).expect(201)
-        const DBSizeAfterAdd = await listHelper.getBlogs();
-        expect(DBSizeAfterAdd.length).toBe(DBSizeBeforeAdd.length + 1)
-    })
-})
+        await api.post('/api/blogs').send(blog).expect(201);
+
+        const DBAfterAdd = await listHelper.getBlogs();
+        expect(DBAfterAdd.length).toBe(DBBeforeAdd.length + 1);
+    });
+});
+
 
 afterAll(async () => {
     await mongoose.connection.close()
