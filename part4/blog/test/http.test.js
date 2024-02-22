@@ -68,6 +68,26 @@ describe('POST Methods', () => {
     });
 });
 
+describe('DELETE Methods', () => {
+    test('using valid ID', async () => {
+        const blogs = await listHelper.getBlogs()
+        const deleteBlog = blogs[0]
+        const DBBeforeAdd = blogs.length
+        await api.delete(`/api/blogs/${deleteBlog.id}`).expect(204)
+
+        const DBAfterAdd = await listHelper.getBlogs();
+        expect(DBAfterAdd.length).toBe(DBBeforeAdd - 1);
+    })
+    test('using invalid ID', async() => {
+        const blogs = await listHelper.getBlogs()
+        const DBBeforeAdd = blogs.length
+        await api.delete(`/api/blogs/aRandomString}`).expect(400)
+
+        const DBAfterAdd = await listHelper.getBlogs();
+        expect(DBAfterAdd.length).toBe(DBBeforeAdd);
+    })
+})
+
 
 afterAll(async () => {
     await mongoose.connection.close()
