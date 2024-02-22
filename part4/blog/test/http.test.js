@@ -5,7 +5,12 @@ const Blog = require('../model/blog')
 const app = require('../app')
 const api = supertest(app)
 
-beforeAll(async () => {
+// beforeAll(async () => {
+//     await Blog.deleteMany({})
+//     await Blog.insertMany(listHelper.initialData)
+// })
+
+beforeEach(async () => {
     await Blog.deleteMany({})
     await Blog.insertMany(listHelper.initialData)
 })
@@ -26,6 +31,8 @@ describe('GET Methods', () => {
     })
 })
 
+  
+
 describe('POST Methods', () => {
     test.each([
         ['with likes property', {
@@ -38,14 +45,26 @@ describe('POST Methods', () => {
             title: "frontend tips and tricks",
             author: "Alan Jack",
             url: "www.fronty.com",
+        }],
+        ['without likes title and url', {
+            author: "Alan Jack",
+            likes: 5
         }]
     ])('Testing api/blogs %s', async (_, blog) => {
         const DBBeforeAdd = await listHelper.getBlogs();
 
-        await api.post('/api/blogs').send(blog).expect(201);
+        if (!blog.title || !blog.url) {
+            await api.post('/api/blogs').send(blog).expect(400);
+          } else {
+            await api.post('/api/blogs').send(blog).expect(201);
+          }
+          const DBAfterAdd = await listHelper.getBlogs();
 
-        const DBAfterAdd = await listHelper.getBlogs();
-        expect(DBAfterAdd.length).toBe(DBBeforeAdd.length + 1);
+          if (!blog.title || !blog.url) {
+            expect(DBAfterAdd.length).toBe(DBBeforeAdd.length); // No change in DB size
+          } else {
+            expect(DBAfterAdd.length).toBe(DBBeforeAdd.length + 1); // DB size increases by one
+          }
     });
 });
 

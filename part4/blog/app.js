@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+require('express-async-errors')
 const mongoose = require('mongoose')
 const blogsRouter = require('./controller/blogs')
 const {MONGODB_URI} = require('./utils/config')

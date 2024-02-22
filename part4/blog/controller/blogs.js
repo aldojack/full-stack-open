@@ -1,5 +1,5 @@
 const blogsRouter = require('express').Router()
-
+const {blogErrorHandling} = require('../utils/middleware')
 const Blog = require('../model/blog')
 
 blogsRouter.get('/', async (request, response) => {
@@ -21,5 +21,7 @@ blogsRouter.post('/', async (request, response) => {
     const savedBlog = await blogToBeAdded.save()
     response.status(201).json(savedBlog)
   })
+
+  blogsRouter.use(blogErrorHandling)
 
   module.exports = blogsRouter
