@@ -28,6 +28,15 @@ blogsRouter.post('/', async (request, response) => {
     response.sendStatus(204)
   })
 
+  blogsRouter.put('/:id', async (request, response) => {
+    const {id} = request.params
+    const {likes} = request.body
+    
+    if(!likes || likes <0) throw new Error('Missing likes property')
+    const blogToUpdate = await Blog.findByIdAndUpdate(id, {likes: likes}, {new: true, runValidators: true})
+    response.status(200).json(blogToUpdate)
+  })
+
   blogsRouter.use(blogErrorHandling)
 
   module.exports = blogsRouter

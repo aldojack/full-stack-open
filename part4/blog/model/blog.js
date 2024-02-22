@@ -4,7 +4,7 @@ const blogSchema = new mongoose.Schema({
   title: {type: String, minLength: 8, required: true},
   author: String,
   url: {type: String, minLength: 10, required: true},
-  likes: Number
+  likes: {type: Number, min: [ 0, 'Cannot be negative value' ] }
 })
 
 blogSchema.set('toJSON', {

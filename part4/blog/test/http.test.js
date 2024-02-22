@@ -88,6 +88,26 @@ describe('DELETE Methods', () => {
     })
 })
 
+describe('PUT Methods', () => {
+    test('using valid ID and likes', async () => {
+        const blogs = await listHelper.getBlogs()
+        const idToUpdate = blogs[0]
+        const updatedBlog = {likes: 50};
+        
+        const result = await api.put(`/api/blogs/${idToUpdate.id}`).send(updatedBlog).expect(200)
+        expect(result.body.likes).toBe(updatedBlog.likes);
+    })
+
+    test('using valid ID with negative likes', async () => {
+        const blogs = await listHelper.getBlogs()
+        const idToUpdate = blogs[0]
+        const updatedBlog = {likes: -50};
+        
+        const result = await api.put(`/api/blogs/${idToUpdate.id}`).send(updatedBlog).expect(400)
+        expect(result.body).toHaveProperty("error");
+    })
+})
+
 
 afterAll(async () => {
     await mongoose.connection.close()
