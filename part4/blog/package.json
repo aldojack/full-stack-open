@@ -16,6 +16,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.1",
@@ -25,7 +26,7 @@
     "supertest": "^6.3.4"
   },
   "jest": {
-    "testEnvironment": "node", 
+    "testEnvironment": "node",
     "globalTeardown": "./test/teardown.js"
   }
 }
