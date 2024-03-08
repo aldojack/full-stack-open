@@ -37,6 +37,6 @@ blogsRouter.post('/', async (request, response) => {
     response.status(200).json(blogToUpdate)
   })
 
-  blogsRouter.use(blogErrorHandling)
+  // blogsRouter.use(blogErrorHandling)
 
   module.exports = blogsRouter
