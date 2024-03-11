@@ -8,10 +8,16 @@ const userSchema = new mongoose.Schema({
     required: true
   },
   name: String,
-  hashedPassword: { 
-    type: String, 
-    required: true 
-  }
+  hashedPassword: {
+    type: String,
+    required: true
+  },
+  blogs: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Blog'
+    }
+  ]
 })
 
 userSchema.set('toJSON', {
