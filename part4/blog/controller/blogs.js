@@ -14,13 +14,14 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
   const { body } = request
   const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  console.log(decodedToken)
+  
   if(!decodedToken.id){
     return response.status(401).json({error: "Token invalid"})
   }
   const user = await User.findById(decodedToken.id)
+  
   if (!user) return response.status(400).end()
-  console.log('user: ', user)
+
   const blogToBeAdded = new Blog({
     title: body.title,
     author: body.author,
@@ -39,7 +40,27 @@ blogsRouter.post('/', async (request, response) => {
 
 blogsRouter.delete('/:id', async (request, response) => {
   const { id } = request.params
-  await Blog.findByIdAndDelete(id)
+
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+  
+  if(!decodedToken.id){
+    return response.status(401).json({error: "Token invalid"})
+  }
+  const user = await User.findById(decodedToken.id)
+  const blogToDelete = await Blog.findById(id)
+
+  if(blogToDelete.user.toString() !== decodedToken.id){
+    return response.status(401).json({error: "Unauthorised to delete this blog"})
+  }
+
+  const blogIndex = user.blogs.indexOf(blogToDelete._id);
+  if (blogIndex !== -1) {
+    user.blogs.splice(blogIndex, 1);
+    await user.save();
+  }
+
+  await Blog.findByIdAndDelete(id);
+  
   response.sendStatus(204)
 })
 
