@@ -1,5 +1,4 @@
 const blogsRouter = require('express').Router()
-const { blogErrorHandling } = require('../utils/middleware')
 const Blog = require('../model/blog')
 const User = require('../model/user')
 const jwt = require('jsonwebtoken')
@@ -13,12 +12,10 @@ blogsRouter.get('/', async (request, response) => {
 
 blogsRouter.post('/', async (request, response) => {
   const { body } = request
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  
-  if(!decodedToken.id){
+  if(!request.user){
     return response.status(401).json({error: "Token invalid"})
   }
-  const user = await User.findById(decodedToken.id)
+  const user = await User.findById(request.user)
   
   if (!user) return response.status(400).end()
 
@@ -40,16 +37,14 @@ blogsRouter.post('/', async (request, response) => {
 
 blogsRouter.delete('/:id', async (request, response) => {
   const { id } = request.params
-
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
   
-  if(!decodedToken.id){
+  if(!request.user){
     return response.status(401).json({error: "Token invalid"})
   }
-  const user = await User.findById(decodedToken.id)
+  const user = await User.findById(request.user)
   const blogToDelete = await Blog.findById(id)
 
-  if(blogToDelete.user.toString() !== decodedToken.id){
+  if(blogToDelete.user.toString() !== request.user){
     return response.status(401).json({error: "Unauthorised to delete this blog"})
   }
 
